@@ -5,12 +5,11 @@
 using namespace std;
 
 struct BoardPosition {
-    vector<char> board;                    // 9-element board
-    vector<BoardPosition> nextPositions;   // possible next positions
-    int rating;                            // evaluation score
+    vector<char> board;                    
+    vector<BoardPosition> nextPositions;   
+    int rating;                            
 };
 
-// Utility to print the board
 void printBoard(const vector<char>& board) {
     for (int i = 0; i < 9; i++) {
         cout << (board[i] == ' ' ? '.' : board[i]) << " ";
@@ -19,7 +18,6 @@ void printBoard(const vector<char>& board) {
     cout << endl;
 }
 
-// Check if a player has won
 bool isWin(const vector<char>& board, char player) {
     int winPatterns[8][3] = {
         {0, 1, 2}, {3, 4, 5}, {6, 7, 8},
@@ -35,14 +33,12 @@ bool isWin(const vector<char>& board, char player) {
     return false;
 }
 
-// Check if the board is full
 bool isDraw(const vector<char>& board) {
     for (char c : board)
         if (c == ' ') return false;
     return true;
 }
 
-// Generate all next positions for the given player
 void generateNextPositions(BoardPosition& pos, char player) {
     pos.nextPositions.clear();
     for (int i = 0; i < 9; i++) {
@@ -55,27 +51,23 @@ void generateNextPositions(BoardPosition& pos, char player) {
     }
 }
 
-// Recursive minimax evaluation based on the Program 3 description
 int evaluatePosition(BoardPosition& pos, char currentPlayer) {
-    // Step 1: If it's a win for someone, assign rating
     if (isWin(pos.board, 'X')) {
-        pos.rating = 1;  // Human wins
+        pos.rating = 1;  
         return pos.rating;
     }
     if (isWin(pos.board, 'O')) {
-        pos.rating = -1; // Computer wins
+        pos.rating = -1; 
         return pos.rating;
     }
     if (isDraw(pos.board)) {
-        pos.rating = 0;  // Draw
+        pos.rating = 0;  
         return pos.rating;
     }
 
-    // Step 2: Generate next positions
     generateNextPositions(pos, currentPlayer);
 
     if (currentPlayer == 'X') {
-        // Human (maximizing)
         int bestRating = numeric_limits<int>::min();
         for (auto& nextPos : pos.nextPositions) {
             int rating = evaluatePosition(nextPos, 'O');
@@ -83,7 +75,6 @@ int evaluatePosition(BoardPosition& pos, char currentPlayer) {
         }
         pos.rating = bestRating;
     } else {
-        // Computer (minimizing)
         int bestRating = numeric_limits<int>::max();
         for (auto& nextPos : pos.nextPositions) {
             int rating = evaluatePosition(nextPos, 'X');
@@ -94,7 +85,6 @@ int evaluatePosition(BoardPosition& pos, char currentPlayer) {
     return pos.rating;
 }
 
-// Choose best move for Computer (O)
 int findBestMove(BoardPosition& pos) {
     generateNextPositions(pos, 'O');
     int bestRating = numeric_limits<int>::max();
@@ -122,7 +112,6 @@ int main() {
     printBoard(game.board);
 
     while (true) {
-        // Human move
         int humanMove;
         cout << "Enter your move (0-8): ";
         cin >> humanMove;
@@ -143,7 +132,6 @@ int main() {
             break;
         }
 
-        // Computer move
         cout << "Computer thinking...\n";
         findBestMove(game);
         printBoard(game.board);
